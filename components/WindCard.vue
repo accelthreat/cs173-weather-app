@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col p-5 bg-blue-500 items-center">
-    <h1 class="font-sans text-base text-white">Wind Status</h1>
+  <div class="flex flex-col p-5 bg-panel_large items-center space-y-5">
+    <h1 class="font-genshin text-base text-gray-700">Wind Status</h1>
     <div>
-      <span class="font-sans text-6xl text-white font-bold" data-test="speed">{{displayedSpeed}}</span>
-      <span class="font-sans text-4xl text-white font-medium">mph</span>
+      <span class="font-genshin text-6xl text-gray-700 font-bold" data-test="speed">{{displayedSpeed}}</span>
+      <span class="font-genshin text-4xl text-gray-700 font-medium">mph</span>
     </div>
     <div class="flex items-center">
       <div class="bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center">
@@ -19,7 +19,7 @@
           <path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z" />
         </svg>
       </div>
-      <h3 class="font-sans text-sm text-white ml-3" data-test="direction">{{direction}}</h3>
+      <h3 class="font-genshin text-sm text-white ml-3" data-test="direction">{{direction}}</h3>
     </div>
   </div>
 </template>

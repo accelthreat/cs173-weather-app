@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col p-5 bg-blue-500 items-center">
-    <h1 class="font-sans text-base text-white">Visibility</h1>
+  <div class="flex flex-col p-5 bg-panel_small items-center space-y-3">
+    <h1 class="font-genshin text-base text-gray-700">Visibility</h1>
     <div>
       <span
-        class="font-sans text-6xl text-white font-bold"
+        class="font-genshin text-6xl text-gray-700 font-bold"
         data-test="visibility"
       >{{displayedVisibility}}</span>
-      <span class="font-sans text-4xl text-white font-medium">miles</span>
+      <span class="font-genshin text-4xl text-gray-700 font-medium">miles</span>
     </div>
   </div>
 </template>

@@ -2,3 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap");
+
+/* @import '~assets/fonts'; */
+
+@font-face {
+    font-family: 'Genshin';
+    src: url('~/assets/fonts/zh-cn.ttf') format('truetype');
+  }

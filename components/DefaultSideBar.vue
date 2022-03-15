@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-blue-500 flex flex-col pb-24 lg:pb-0">
+  <div class="bg-sidebar flex flex-col pt-20 lg:pb-0">
     <div class="flex justify-between py-6 px-12 900p:p-12">
       <button
-        class="bg-gray-700 font-sans text-base lg:text-xs 900p:text-base text-white py-2 px-5 lg:px-3 900p:px-5"
+        class="bg-gray-700 font-genshin text-base lg:text-xs 900p:text-base text-white py-2 px-5 lg:px-3 900p:px-5"
         @click.prevent="$emit('search-start')"
       >Search for places</button>
       <button
@@ -22,7 +22,7 @@
         </svg>
       </button>
     </div>
-    <div :class="$style.bg" class="flex items-center justify-center">
+    <div :class="$style.bg" class="flex items-center justify-center animate-pulse">
       <transition name="fade" mode="out-in">
         <img
           :src="require(`@/assets/images/${image}`)"
@@ -34,20 +34,20 @@
     </div>
     <div class="mx-auto lg:my-5">
       <span
-        class="font-sans text-9xl lg:text-6xl 900p:text-9xl text-white font-medium"
+        class="font-genshin text-9xl lg:text-6xl 900p:text-9xl text-gray-700 font-medium"
       >{{displayedTodayTemp}}</span>
       <span
-        class="font-sans text-5xl lg:text-3xl 900p:text-5xl text-gray-500 font-medium"
+        class="font-genshin text-5xl lg:text-3xl 900p:text-5xl text-gray-700 font-medium"
       >°{{fahrenheitToggle ? "F" : "C"}}</span>
     </div>
     <div
-      class="mx-auto lg:my-5 font-sans text-4xl lg:text-2xl 900p:text-4xl text-gray-500 font-semibold"
+      class="mx-auto lg:my-5 font-genshin text-4xl lg:text-2xl 900p:text-4xl text-gray-700 font-semibold"
     >{{weatherStateName}}</div>
     <div class="mx-auto mt-8 lg:mt-16">
-      <span class="font-sans text-lg lg:text-base 900p:text-lg text-gray-600 font-medium">Today</span>
-      <span class="font-sans text-lg lg:text-base 900p:text-lg text-gray-600 font-medium mx-2">•</span>
+      <span class="font-genshin text-lg lg:text-base 900p:text-lg text-gray-700 font-medium">Today</span>
+      <span class="font-genshin text-lg lg:text-base 900p:text-lg text-gray-700 font-medium mx-2">•</span>
       <span
-        class="font-sans text-lg lg:text-base 900p:text-lg text-gray-600 font-medium"
+        class="font-genshin text-lg lg:text-base 900p:text-lg text-gray-700 font-medium"
       >{{todayDate}}</span>
     </div>
     <div class="mx-auto mt-4 lg:mt-8 flex align-bottom">
@@ -55,7 +55,7 @@
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          class="text-gray-600 fill-current h-6 w-6 lg:h-5 lg:w-5 900p:h-6 900p:w-6"
+          class="text-gray-700 fill-current h-6 w-6 lg:h-5 lg:w-5 900p:h-6 900p:w-6"
         >
           <path d="M0 0h24v24H0z" fill="none" />
           <path
@@ -64,7 +64,7 @@
         </svg>
       </span>
       <span
-        class="font-sans text-lg lg:text-base 900p:text-lg text-gray-600 font-semibold"
+        class="font-genshin text-lg lg:text-base 900p:text-lg text-gray-700 font-semibold"
       >{{cityName}}</span>
     </div>
   </div>
@@ -150,5 +150,6 @@ export default {
 .bg {
   background-image: url("../assets/images/Cloud-background.png");
   background-size: contain;
+  background-position: center;
 }
 </style>

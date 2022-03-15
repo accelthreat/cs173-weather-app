@@ -1,6 +1,6 @@
 <template>
   <button
-    class="px-4 py-6 border border-blue-500 hover:border-gray-800 text-white font-medium flex justify-between w-full focus:outline-none"
+    class="px-4 py-6 border border-white hover:border-gray-800 text-white font-genshin flex justify-between w-full focus:outline-none"
     @mouseover="hover = true"
     @mouseout="hover = false"
     @click.prevent="onClick"

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-500 h-screen lg:h-auto flex flex-col px-6 py-6 900p:px-12">
+  <div class="bg-searchbar h-screen lg:h-auto flex flex-col px-6 py-6 900p:px-12">
     <div class="flex justify-end">
       <button class="focus:outline-none" @click.prevent="$emit('search-exit')">
         <svg
@@ -28,7 +28,7 @@
             />
           </svg>
           <input
-            class="appearance-none w-full px-2 text-white leading-tight focus:outline-none border-none bg-blue-500 bg-opacity-0"
+            class="font-genshin appearance-none w-full px-2 text-white leading-tight focus:outline-none border-none bg-blue-500 bg-opacity-0"
             id="location"
             type="text"
             placeholder="search location"

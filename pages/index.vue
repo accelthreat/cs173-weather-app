@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:grid lg:grid-cols-12 lg:gap-8 lg:min-h-screen">
+  <div class="bg-main bg-fixed bg-right lg:grid lg:grid-cols-12 lg:gap-8 lg:min-h-screen">
     <keep-alive>
       <component
         :is="search ? 'SearchSideBar' : 'DefaultSideBar'"
@@ -16,14 +16,14 @@
     >
       <div class="hidden lg:flex lg:flex-row justify-end lg:mb-10 900p:mb-16">
         <button
-          class="rounded-full w-10 h-10 flex items-center justify-center focus:outline-none mr-2 font-sans text-lg font-bold"
+          class="rounded-full w-10 h-10 flex items-center justify-center focus:outline-none mr-2 font-genshin text-lg font-bold"
           @click.prevent="fahrenheitToggle = false"
-          :class="fahrenheitToggle ? 'bg-blue-400 text-white' : 'bg-white text-blue-700'"
+          :class="fahrenheitToggle ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'"
         >°C</button>
         <button
-          class="rounded-full w-10 h-10 flex items-center justify-center focus:outline-none font-sans text-lg font-bold"
+          class="rounded-full w-10 h-10 flex items-center justify-center focus:outline-none font-genshin text-lg font-bold"
           @click.prevent="fahrenheitToggle = true"
-          :class="fahrenheitToggle ? 'bg-white text-blue-700' : 'bg-blue-400 text-white'"
+          :class="fahrenheitToggle ? 'bg-white text-gray-700' : 'bg-gray-700 text-white'"
         >°F</button>
       </div>
       <div class="grid grid-cols-2 gap-8 lg:grid-cols-5">
@@ -38,7 +38,7 @@
         />
       </div>
       <div class="mt-8">
-        <h2 class="font-sans text-2xl text-white font-bold">Today's Highlights</h2>
+        <h2 class="font-genshin text-2xl text-white font-bold">Today's Highlights</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 900p:gap-12 mt-4">
           <WindCard
             :speed="todayWeatherData.wind_speed"
@@ -50,7 +50,7 @@
         </div>
       </div>
       <div
-        class="mt-10 font-semibold text-gray-800 text-sm flex justify-center"
+        class="mt-10 font-genshin text-zinc-400 text-sm flex justify-center"
       >Daniel Montecastro and Matthew Lemuel Rey CS173</div>
     </div>
   </div>

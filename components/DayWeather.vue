@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col p-5 bg-blue-500 items-center justify-between">
+  <div class="bg-card flex flex-col p-5 bg-blue-500 items-center justify-between">
     <h5
-      class="font-sans text-base lg:text-sm xl:text-base text-white"
+      class="font-genshin text-base lg:text-sm xl:text-base text-card"
       data-test="date"
     >{{actualDate}}</h5>
     <div class="flex-shrink-0 mt-1">
@@ -16,11 +16,11 @@
     </div>
     <div class="mt-8 flex flex-row justify-between w-full px-2">
       <span
-        class="font-sans text-base lg:text-sm xl:text-base text-white"
+        class="font-genshin text-base lg:text-sm xl:text-base text-card"
         data-test="maxtemp"
       >{{displayedMaxTemp}}</span>
       <span
-        class="font-sans text-base lg:text-sm xl:text-base text-gray-500"
+        class="font-genshin text-base lg:text-sm xl:text-base text-card"
         data-test="mintemp"
       >{{displayedMinTemp}}</span>
     </div>
