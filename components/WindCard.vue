@@ -1,5 +1,6 @@
 <template>
-  <div class="flex flex-col p-5 bg-panel_large items-center space-y-5">
+<div class="w-big_card h-big_card">
+   <div class="flex flex-col p-5 bg-contain bg-center bg-no-repeat bg-panel_large items-center space-y-5 w-full h-full">
     <h1 class="font-genshin text-base text-gray-700">Wind Status</h1>
     <div>
       <span class="font-genshin text-6xl text-gray-700 font-bold" data-test="speed">{{displayedSpeed}}</span>
@@ -22,6 +23,8 @@
       <h3 class="font-genshin text-sm text-white ml-3" data-test="direction">{{direction}}</h3>
     </div>
   </div>
+</div>
+ 
 </template>
 
 <script>

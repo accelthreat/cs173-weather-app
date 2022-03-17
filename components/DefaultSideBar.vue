@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-sidebar flex flex-col pt-20 lg:pb-0">
+  <div class="bg-sidebar_clr flex flex-col">
+    <div class="bg-sidebar_top bg-no-repeat w-sidebar_header h-sidebar_header">
+    </div>
     <div class="flex justify-between py-6 px-12 900p:p-12">
       <button
         class="bg-gray-700 font-genshin text-base lg:text-xs 900p:text-base text-white py-2 px-5 lg:px-3 900p:px-5"
@@ -67,6 +69,9 @@
         class="font-genshin text-lg lg:text-base 900p:text-lg text-gray-700 font-semibold"
       >{{cityName}}</span>
     </div>
+    <div style="flex-grow: 1"></div>
+    <div class="bg-sidebar_bot bg-no-repeat w-sidebar_footer h-sidebar_footer">
+    </div>
   </div>
 </template>
 
@@ -100,8 +105,8 @@ export default {
       return Math.round(temp);
     },
     todayDate() {
-      let date = new Date(Date.now());
-      let arr = date.toDateString().split(" ");
+      const date = new Date(Date.now());
+      const arr = date.toDateString().split(" ");
       return arr[0] + ", " + arr[1] + " " + arr[2];
     },
     image() {
@@ -152,4 +157,5 @@ export default {
   background-size: contain;
   background-position: center;
 }
+
 </style>
