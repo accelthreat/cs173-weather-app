@@ -67,6 +67,7 @@ import HumidityCard from "@/components/HumidityCard";
 import DefaultSideBar from "@/components/DefaultSideBar";
 import SearchSideBar from "@/components/SearchSideBar";
 
+import worldCities from "../assets/worldcities.json";
 const hours = "&hourly=relativehumidity_2m,pressure_msl"
 const daily = "&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant"
 const timez = "&timezone=Asia%2FSingapore"
@@ -89,11 +90,6 @@ export default {
       fahrenheitToggle: false,
       search: false,
     };
-  },
-  self_loc() {
-    return {
-
-    }
   },
   computed: {
     processedWeatherData() {
@@ -121,8 +117,6 @@ export default {
             precipitation: info.daily.precipitation_sum[i],
           })
         }
-      
-      console.log(JSON.stringify(data))
       return data
       }
     },
@@ -163,55 +157,40 @@ export default {
 
       console.log(ip);
       try {
-        console.log(JSON.stringify("Default Move?"))
-        const { data } = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client`);
-
-        const {data: weatherData} = await axios.get(
-          `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}${settings}`
-        );
-
-        return {
-          weatherData: weatherData,
-          city: data.principalSubdivision
-        };
-
-      } catch (error) {
-        console.log(JSON.stringify("Error 1 on Manila"))
         const {data: weatherData} = await axios.get(
           `https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842${settings}`
-        );
-
-        return {
+        ); return {
           weatherData: weatherData,
-          city: "Manila"
+          city: "Manila, Philippines"
+        };
+      } catch (error) {
+        const {data: weatherData} = await axios.get(
+          `https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842${settings}`
+        ); return {
+          weatherData: weatherData,
+          city: "Manila, Philippines"
         };
       }
     } else {
       try {
-        console.log(JSON.stringify("First Run"))
-        const { data } = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client`);
-
-        const {data: weatherData} = await axios.get(
-          `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}${settings}`
-        );
-
-        return {
-          weatherData: weatherData,
-          city: data.principalSubdivision
-        };
-
-      } catch (error) {
-        console.log(JSON.stringify("Error 2 on Manila"))
         const {data: weatherData} = await axios.get(
           `https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842${settings}`
-        );
-
-        return {
+        ); return {
           weatherData: weatherData,
-          city: "Manila 2"
+          city: "Manila, Philippines"
+        };
+      } catch (error) {
+        const {data: weatherData} = await axios.get(
+          `https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842${settings}`
+        ); return {
+          weatherData: weatherData,
+          city: "Manila, Philippines"
         };
       }
     }
+  },
+  mounted() {
+    this.initialCityList = worldCities
   },
   methods: {
     async changeCity(city) {
@@ -221,7 +200,8 @@ export default {
         `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lng}${settings}`
       );
   
-      this.city = (city.city_ascii === '' ? '???' : city.city_ascii) //+ data.latitude + " " + data.longitude
+      this.initialCityList = worldCities
+      this.city = city.city_ascii + ", " + city.country
       this.weatherData = data;
     },
     weatherStateCodeToName(code) {
@@ -245,17 +225,28 @@ export default {
         return "Clear"
       }
     },
-    async getUserLocationFromGPS() {
-      const { data } = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client`);
-      const {data: weatherData} = await axios.get(
-        `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}${settings}`
-      );
-  
-      this.city = (data.city === '' ? '???' : data.city) //+ data.latitude + " " + data.longitude
-      this.weatherData = weatherData;
+    coordToCity(lat, lng) {
+      var cities = this.initialCityList;
+      var search = cities.filter(x => (Math.abs(x.lat - lat) < 0.05 && Math.abs(x.lng - lng) < 0.05));
+      if (Object.keys(search).length === 0) {
+        search = cities.filter(x => (Math.abs(x.lat - lat) < 0.1 && Math.abs(x.lng - lng) < 0.1));
+      } return search;
+    },
+    async getUserLocationFromGPS(){
+      if (!navigator?.geolocation) return;
+      else {
+        navigator.geolocation.getCurrentPosition(
+          async position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
 
-      error => { console.log(error); }
-    }, //
+            const data = this.coordToCity(lat, lng);
+            this.initialCityList = data;
+            await this.changeCity(data[0]);
+          }, error => { console.log(error); }
+        );
+      }
+    },
   }
 };
 </script>
