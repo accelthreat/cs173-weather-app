@@ -5,7 +5,7 @@
     @mouseout="hover = false"
     @click.prevent="onClick"
   >
-    {{cityName}}
+    {{city.city_ascii}}
     <span :class="hover ? '' : 'opacity-0'">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,14 +23,9 @@
 export default {
   name: "SearchItem",
   props: {
-    cityName: {
-      type: String,
+    city: {
       required: true
     },
-    woeid: {
-      type: Number,
-      required: true
-    }
   },
   data() {
     return {
@@ -39,7 +34,7 @@ export default {
   },
   methods: {
     onClick() {
-      this.$emit("change-city", this.woeid);
+      this.$emit("change-city", this.city);
     }
   }
 };

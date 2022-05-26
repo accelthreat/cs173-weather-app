@@ -1,7 +1,16 @@
 <template>
   <div class="bg-main bg-fixed bg-right lg:grid lg:grid-cols-12 lg:gap-8 lg:min-h-screen">
     <keep-alive>
-      <DefaultSideBar v-bind="sideBarProps" @get-user-location="getUserLocationFromGPS"/>
+        <component
+        :is="search ? 'SearchSideBar' : 'DefaultSideBar'"
+        v-bind="sideBarProps"
+        @search-start="search = true"
+        @search-exit="search = false"
+        @change-city="changeCity"
+        @get-user-location="getUserLocationFromGPS"
+        class="lg:fixed lg:inset-y-0 900p:w-3/12"
+      />
+      <!-- <DefaultSideBar v-bind="sideBarProps" @get-user-location="getUserLocationFromGPS"/> -->
     </keep-alive>
     <div
       class="col-start-5 lg:col-start-5 900p:col-start-5 col-span-7 lg:col-span-8 900p:col-span-7 p-10"
@@ -95,7 +104,7 @@ export default {
       } else {
         console.log("WeatherData");
         console.log(JSON.stringify(this.weatherData));
-        const info = this.weatherData.data;
+        const info = this.weatherData;
         console.log("WeatherData.daily");
         console.log(JSON.stringify(this.weatherData.daily));
         console.log("WeatherData.data");
@@ -161,7 +170,7 @@ export default {
         console.log(JSON.stringify("Default Move?"))
         const { data } = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client`);
 
-        const weatherData = await axios.get(
+        const {data: weatherData} = await axios.get(
           `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}${settings}`
         );
 
@@ -173,7 +182,7 @@ export default {
 
       } catch (error) {
         console.log(JSON.stringify("Error 1 on Manila"))
-        const weatherData = await axios.get(
+        const {data: weatherData} = await axios.get(
           `https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842${settings}`
         );
 
@@ -187,7 +196,7 @@ export default {
         console.log(JSON.stringify("First Run"))
         const { data } = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client`);
 
-        const weatherData = await axios.get(
+        const {data: weatherData} = await axios.get(
           `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}${settings}`
         );
 
@@ -199,7 +208,7 @@ export default {
 
       } catch (error) {
         console.log(JSON.stringify("Error 2 on Manila"))
-        const weatherData = await axios.get(
+        const {data: weatherData} = await axios.get(
           `https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842${settings}`
         );
 
@@ -214,6 +223,16 @@ export default {
     // this.getUserLocationFromIp();
   },
   methods: {
+    async changeCity(city) {
+      if (city === undefined) return;
+
+      const { data } = await axios.get(
+        `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lng}${settings}`
+      );
+  
+      this.city = (city.city_ascii === '' ? '???' : city.city_ascii) //+ data.latitude + " " + data.longitude
+      this.weatherData = data;
+    },
     weatherStateCodeToName(code) {
       if(code === 0) {
         return "Clear"
@@ -235,15 +254,9 @@ export default {
         return "Clear"
       }
     },
-    async fetchCitiesFromCoord(latitude, longitude) {
-      const { data } = await axios.get(
-        `https://meta-weather.now.sh/api/location/search/?lattlong=${latitude},${longitude}`
-      );
-      return data;
-    },
     async getUserLocationFromGPS() {
       const { data } = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client`);
-      const weatherData = await axios.get(
+      const {data: weatherData} = await axios.get(
         `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}${settings}`
       );
   

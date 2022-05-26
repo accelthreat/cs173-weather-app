@@ -42,9 +42,9 @@
       <div class="mt-6 absolute inset-0 overflow-y-scroll sc">
         <SearchItem
           v-for="result in searchResults"
-          :key="result.woeid"
-          :cityName="result.title"
-          :woeid="result.woeid"
+          :key="result.lat * result.lng"
+          :cityName="result.city_ascii"
+          :city="result"
           @change-city="onItemClick"
         />
       </div>
@@ -55,39 +55,47 @@
 <script>
 import SearchItem from "@/components/SearchItem";
 import { debounce } from "debounce";
+import worldCities from "../assets/worldcities.json";
 
 export default {
   name: "SearchSideBar",
   components: {
     SearchItem
   },
-  props: {
-    initialCityList: {
-      type: Array
-    }
-  },
   data() {
     return {
-      searchResults: this.initialCityList ?? [],
-      searchText: ""
+      worldCities: worldCities,
+      searchText: "",
+      searchResults: []
     };
+  },
+  computed: {
+    // searchResults: function() {
+    //   if (this.searchText === "") return []
+    //   return this.worldCities.filter((city) => {
+    //     return city.city_ascii.match(this.searchText)
+    //   })
+    // }
   },
   methods: {
     onSearchInput: debounce(async function(e) {
       if (e.target.value === "") this.searchResults = [];
       if (!e.target.value) return;
 
-      try {
-        const { data } = await this.$axios.get(
-          `https://meta-weather.now.sh/api/location/search/?query=${e.target.value}`
-        );
-        this.searchResults = data;
-      } catch (error) {
-        console.log(error);
-      }
+      this.searchResults = this.worldCities.filter((city) => {
+        return city.city_ascii.match(this.searchText)
+      }).slice(0, 5);
+      // try {
+      //   const { data } = await this.$axios.get(
+      //     `https://meta-weather.now.sh/api/location/search/?query=${e.target.value}`
+      //   );
+      //   this.searchResults = data;
+      // } catch (error) {
+      //   console.log(error);
+      // }
     }, 200),
-    onItemClick(woeid) {
-      this.$emit("change-city", woeid);
+    onItemClick(city) {
+      this.$emit("change-city", city);
       this.$emit("search-exit");
       this.searchText = "";
     }
