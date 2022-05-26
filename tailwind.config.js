@@ -13,8 +13,8 @@ module.exports = {
         panel_small: "url('~assets/menus/Panel_Small.png')",
         panel_large: "url('~assets/menus/Panel_Large.png')",
         sidebar:     "url('~assets/menus/Sidebar.png')",
-        sidebar_top:     "url('~assets/menus/Sidebar_top.png')",
-        sidebar_bot:     "url('~assets/menus/Sidebar_bot.png')",
+        sidebar_top:     "url('~assets/menus/Sidebar_Top.png')",
+        sidebar_bot:     "url('~assets/menus/Sidebar_Bot.png')",
         searchbar:   "url('~assets/menus/Searchbar.png')"
       }, fontFamily: { genshin: ['Genshin'], },
       backgroundSize: {
