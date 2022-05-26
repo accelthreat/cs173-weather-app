@@ -69,34 +69,19 @@ export default {
       searchResults: []
     };
   },
-  computed: {
-    // searchResults: function() {
-    //   if (this.searchText === "") return []
-    //   return this.worldCities.filter((city) => {
-    //     return city.city_ascii.match(this.searchText)
-    //   })
-    // }
-  },
   methods: {
     onSearchInput: debounce(async function(e) {
       if (e.target.value === "") this.searchResults = [];
       if (!e.target.value) return;
 
       this.searchResults = this.worldCities.filter((city) => {
-        return city.city_ascii.match(this.searchText)
+        return city.city_ascii.toLowerCase().match(this.searchText.toLowerCase())
       }).slice(0, 5);
-      // try {
-      //   const { data } = await this.$axios.get(
-      //     `https://meta-weather.now.sh/api/location/search/?query=${e.target.value}`
-      //   );
-      //   this.searchResults = data;
-      // } catch (error) {
-      //   console.log(error);
-      // }
     }, 200),
     onItemClick(city) {
       this.$emit("change-city", city);
       this.$emit("search-exit");
+      this.searchResults = []
       this.searchText = "";
     }
   }

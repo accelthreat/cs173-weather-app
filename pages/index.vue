@@ -88,7 +88,6 @@ export default {
       city: "",
       fahrenheitToggle: false,
       search: false,
-      initialCityList: []
     };
   },
   self_loc() {
@@ -142,7 +141,6 @@ export default {
       if (this.search) {
         return {
           class: "lg:col-span-3 900p:col-span-3",
-          initialCityList: this.initialCityList
         };
       } else {
         return {
@@ -157,8 +155,6 @@ export default {
   },
   async asyncData({ req, res }) {
     if (process.server) {
-      // console.log("serverSide asyncData");
-      // console.log(req);
       const ip =
         req.headers["x-forwarded-for"] ||
         req.connection.remoteAddress ||
@@ -175,9 +171,8 @@ export default {
         );
 
         return {
-          initialCityList: [],
           weatherData: weatherData,
-          city: "Test 1"
+          city: data.principalSubdivision
         };
 
       } catch (error) {
@@ -201,9 +196,8 @@ export default {
         );
 
         return {
-          initialCityList: [],
           weatherData: weatherData,
-          city: "Test 2"
+          city: data.principalSubdivision
         };
 
       } catch (error) {
@@ -218,9 +212,6 @@ export default {
         };
       }
     }
-  },
-  mounted() {
-    // this.getUserLocationFromIp();
   },
   methods: {
     async changeCity(city) {
