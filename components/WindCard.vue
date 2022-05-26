@@ -4,7 +4,7 @@
     <h1 class="font-genshin text-base text-gray-700">Wind Status</h1>
     <div>
       <span class="font-genshin text-6xl text-gray-700 font-bold" data-test="speed">{{displayedSpeed}}</span>
-      <span class="font-genshin text-4xl text-gray-700 font-medium">mph</span>
+      <span class="font-genshin text-4xl text-gray-700 font-medium">kph</span>
     </div>
     <div class="flex items-center">
       <div class="bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center">
@@ -36,7 +36,7 @@ export default {
       required: true
     },
     direction: {
-      type: String,
+      type: Number,
       required: true
     }
   },
@@ -45,6 +45,7 @@ export default {
       return Math.round(this.speed);
     },
     angle() {
+      return this.direction
       let angle = -45;
       switch (this.direction) {
         case "N":

@@ -1,13 +1,13 @@
 <template>
   <div class="w-small_card h-small_card">
     <div class="flex flex-col p-5 bg-contain bg-center bg-no-repeat bg-panel_small items-center space-y-5 w-full h-full">
-    <h1 class="font-genshin text-base text-gray-700">Visibility</h1>
+    <h1 class="font-genshin text-base text-gray-700">Precipitation</h1>
     <div>
       <span
         class="font-genshin text-6xl text-gray-700 font-bold"
         data-test="visibility"
       >{{displayedVisibility}}</span>
-      <span class="font-genshin text-4xl text-gray-700 font-medium">miles</span>
+      <span class="font-genshin text-4xl text-gray-700 font-medium">mm</span>
     </div>
   </div>
   </div>
@@ -18,16 +18,16 @@
 export default {
   name: "VisibilityCard",
   props: {
-    visibility: {
+    precipitation: {
       type: Number,
       required: true
     }
   },
   computed: {
     displayedVisibility() {
-      let rounded = Math.round(this.visibility * 10) / 10;
+      let rounded = Math.round(this.precipitation * 10) / 10;
       rounded = String(rounded);
-      rounded = rounded.replace(".", ",");
+      //rounded = rounded.replace(".", ",");
       return rounded;
     }
   }

@@ -1,15 +1,7 @@
 <template>
   <div class="bg-main bg-fixed bg-right lg:grid lg:grid-cols-12 lg:gap-8 lg:min-h-screen">
     <keep-alive>
-      <component
-        :is="search ? 'SearchSideBar' : 'DefaultSideBar'"
-        v-bind="sideBarProps"
-        @search-start="search = true"
-        @search-exit="search = false"
-        @change-city="changeCity"
-        @get-user-location="getUserLocationFromGPS"
-        class="lg:fixed lg:inset-y-0 900p:w-3/12"
-      />
+      <DefaultSideBar v-bind="sideBarProps" @get-user-location="getUserLocationFromGPS"/>
     </keep-alive>
     <div
       class="col-start-5 lg:col-start-5 900p:col-start-5 col-span-7 lg:col-span-8 900p:col-span-7 p-10"
@@ -28,10 +20,10 @@
       </div>
       <div class="grid grid-cols-2 gap-8 lg:grid-cols-5">
         <DayWeather
-          :date="weather.applicable_date"
-          :weatherStateName="weather.weather_state_name"
-          :maxTemp="weather.max_temp"
-          :minTemp="weather.min_temp"
+          :date="weather.date"
+          :weatherStateName="weather.weatherStateName"
+          :maxTemp="weather.maxTemp"
+          :minTemp="weather.minTemp"
           :isFahrenheit="fahrenheitToggle"
           v-for="(weather, index) in futureWeathers"
           :key="index"
@@ -42,11 +34,11 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 900p:gap-12 mt-4">
           <WindCard
             :speed="todayWeatherData.wind_speed"
-            :direction="todayWeatherData.wind_direction_compass"
+            :direction="todayWeatherData.wind_direction"
           />
           <HumidityCard :humidity="todayWeatherData.humidity" />
-          <VisibilityCard :visibility="todayWeatherData.visibility" />
-          <PressureCard :pressure="todayWeatherData.air_pressure" />
+          <VisibilityCard :precipitation="todayWeatherData.precipitation" />
+          <PressureCard :pressure="todayWeatherData.pressure" />
         </div>
       </div>
       <div
@@ -57,6 +49,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import DayWeather from "@/components/DayWeather";
 import PressureCard from "@/components/PressureCard";
 import VisibilityCard from "@/components/VisibilityCard";
@@ -64,7 +57,7 @@ import WindCard from "@/components/WindCard";
 import HumidityCard from "@/components/HumidityCard";
 import DefaultSideBar from "@/components/DefaultSideBar";
 import SearchSideBar from "@/components/SearchSideBar";
-import axios from "axios";
+
 
 export default {
   components: {
@@ -78,7 +71,7 @@ export default {
   },
   data() {
     return {
-      weatherData: [],
+      weatherData: {},
       city: "",
       fahrenheitToggle: false,
       search: false,
@@ -86,16 +79,37 @@ export default {
     };
   },
   computed: {
+    processedWeatherData() {
+      let data = []
+      if (Object.keys(this.weatherData).length === 0 && this.weatherData.constructor === Object) {
+        return data
+      } else {
+        for(let i = 0; i<this.weatherData.daily.temperature_2m_min.length; i++) {
+          data.push({
+            date: this.weatherData.daily.time[i],
+            weatherStateName: this.weatherStateCodeToName(this.weatherData.daily.weathercode[i]),
+            maxTemp: this.weatherData.daily.temperature_2m_min[i],
+            minTemp: this.weatherData.daily.temperature_2m_max[i],
+            wind_speed: this.weatherData.daily.windspeed_10m_max[i],
+            wind_direction: this.weatherData.daily.winddirection_10m_dominant[i],
+            humidity: this.weatherData.hourly.relativehumidity_2m[i * 24],
+            pressure: this.weatherData.hourly.pressure_msl[i * 24],
+            precipitation: this.weatherData.daily.precipitation_sum[i],
+          })
+        }
+      return data
+      }
+    },
     todayDate() {
-      let date = new Date(Date.now());
-      let arr = date.toDateString().split(" ");
+      const date = new Date(Date.now());
+      const arr = date.toDateString().split(" ");
       return arr[0] + ", " + arr[1] + " " + arr[2];
     },
     todayWeatherData() {
-      return this.weatherData[0];
+      return this.processedWeatherData[0]
     },
     futureWeathers() {
-      return this.weatherData.slice(1);
+      return this.processedWeatherData.slice(1,6);
     },
     sideBarProps() {
       if (this.search) {
@@ -107,9 +121,9 @@ export default {
         return {
           class: "lg:col-span-3 900p:col-span-3",
           cityName: this.city,
-          weatherStateName: this.todayWeatherData.weather_state_name,
+          weatherStateName: this.todayWeatherData.weatherStateName,
           fahrenheitToggle: this.fahrenheitToggle,
-          temperature: this.todayWeatherData.the_temp
+          temperature: this.todayWeatherData.maxTemp
         };
       }
     }
@@ -130,27 +144,23 @@ export default {
           `https://geolocation-db.com/json/${process.env.GEOLOCATION_KEY}/${ip}`
         );
 
-        const cityData = await axios.get(
-          `https://meta-weather.now.sh/api/location/search/?lattlong=${data.latitude},${data.longitude}`
-        );
-
         const weatherData = await axios.get(
-          `https://meta-weather.now.sh/api/location/${cityData.data[0].woeid}/`
+          `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&hourly=relativehumidity_2m,pressure_msl&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant&timezone=Asia%2FSingapore`
         );
 
         return {
-          initialCityList: cityData.data,
-          weatherData: weatherData.data.consolidated_weather,
-          city: weatherData.data.title
+          initialCityList: [],
+          weatherData: weatherData,
+          city: "xzcvxcvxc"
         };
       } catch (error) {
         // console.log("serverSide asyncData error", error);
         const { data } = await axios.get(
-          "https://meta-weather.now.sh/api/location/2487956/" //ph 1199477
+          "https://api.open-meteo.com/v1/forecast?latitude=14.54&longitude=121.11&hourly=relativehumidity_2m,pressure_msl&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant&timezone=Asia%2FSingapore" //ph 1199477
         );
         return {
-          weatherData: data.consolidated_weather,
-          city: data.title
+          weatherData: data,
+          city: "sdfsd"
         };
       }
     } else {
@@ -160,27 +170,23 @@ export default {
           `https://geolocation-db.com/json/${process.env.GEOLOCATION_KEY}`
         );
 
-        const cityData = await axios.get(
-          `https://meta-weather.now.sh/api/location/search/?lattlong=${data.latitude},${data.longitude}`
-        );
-
         const weatherData = await axios.get(
-          `https://meta-weather.now.sh/api/location/${cityData.data[0].woeid}/`
+          `https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&hourly=relativehumidity_2m,pressure_msl&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant&timezone=Asia%2FSingapore`
         );
 
         return {
-          initialCityList: cityData.data,
-          weatherData: weatherData.data.consolidated_weather,
-          city: weatherData.data.title
+          initialCityList: [],
+          weatherData: weatherData,
+          city: "sdfsdfsd"
         };
       } catch (error) {
         //console.log(error, "clientside asyncData");
         const { data } = await axios.get(
-          "https://meta-weather.now.sh/api/location/2487956/" //ph 1199477
+                   "https://api.open-meteo.com/v1/forecast?latitude=14.54&longitude=121.11&hourly=relativehumidity_2m,pressure_msl&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant&timezone=Asia%2FSingapore" //ph 1199477
         );
         return {
-          weatherData: data.consolidated_weather,
-          city: data.title
+          weatherData: data,
+          city: "Manila"
         };
       }
     }
@@ -189,13 +195,26 @@ export default {
     // this.getUserLocationFromIp();
   },
   methods: {
-    async changeCity(woeid) {
-      const { data } = await axios.get(
-        `https://meta-weather.now.sh/api/location/${woeid}/`
-      );
-
-      this.weatherData = data.consolidated_weather;
-      this.city = data.title;
+    weatherStateCodeToName(code) {
+      if(code === 0) {
+        return "Clear"
+      } else if (code > 0 && code < 3) {
+        return "Light Cloud"
+      } else if (code === 3 || code === 45 || code === 48) {
+        return "Heavy Cloud"
+      } else if (code > 50 && code < 56) {
+        return "Light Rain"
+      } else if (code > 60 && code < 66) {
+        return "Heavy Rain"
+      } else if (code > 65 && code < 68) {
+        return "Sleet"
+      } else if ((code >= 71 && code <= 77) || (code >= 85 && code <=86)) {
+        return "Snow"
+      } else if ((code >= 80 && code <= 82) || (code >=95 && code <=99)) {
+        return "Thunderstorm"
+      } else {
+        return "Clear"
+      }
     },
     async fetchCitiesFromCoord(latitude, longitude) {
       const { data } = await axios.get(
@@ -211,9 +230,17 @@ export default {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
 
-            const data = await this.fetchCitiesFromCoord(latitude, longitude);
-            this.initialCityList = data;
-            await this.changeCity(data[0].woeid);
+        //      const { data } = await axios.get(
+        //   `https://geolocation-db.com/json/${process.env.GEOLOCATION_KEY}/${ip}`
+        // );
+
+        const weatherData = await axios.get(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=relativehumidity_2m,pressure_msl&daily=weathercode,precipitation_sum,temperature_2m_max,temperature_2m_min,windspeed_10m_max,winddirection_10m_dominant&timezone=Asia%2FSingapore`
+        );
+          
+      this.weatherData = weatherData;
+      this.city = "asdasd";
+
           },
           error => {
             console.log(error);
@@ -221,24 +248,6 @@ export default {
         );
       }
     },
-    async getUserLocationFromIp() {
-      try {
-        // console.log(process.env.GEOLOCATION_KEY);
-        const { data } = await axios.get(
-          `https://geolocation-db.com/json/${process.env.GEOLOCATION_KEY}`
-        );
-
-        const citiesData = await this.fetchCitiesFromCoord(
-          data.latitude,
-          data.longitude
-        );
-
-        this.initialCityList = citiesData;
-        await this.changeCity(citiesData[0].woeid);
-      } catch (error) {
-        console.log(error);
-      }
-    }
   }
 };
 </script>
